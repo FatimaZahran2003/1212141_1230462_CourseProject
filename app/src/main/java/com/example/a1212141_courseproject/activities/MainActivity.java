@@ -16,7 +16,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.example.a1212141_courseproject.R;
+import com.example.a1212141_courseproject.fragments.FavoriteFragment;
 import com.example.a1212141_courseproject.fragments.HomeFragment;
+import com.example.a1212141_courseproject.fragments.SpecialFragment;
 import com.example.a1212141_courseproject.fragments.TripsFragment;
 import com.google.android.material.navigation.NavigationView;
 
@@ -41,50 +43,62 @@ public class MainActivity extends AppCompatActivity {
         navigationView = findViewById(R.id.nav_view);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar,
-                R.string.open, R.string.close
+                this,
+                drawerLayout,
+                toolbar,
+                R.string.open,
+                R.string.close
         );
+
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
         if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new HomeFragment())
-                    .commit();
+            loadFragment(new HomeFragment());
+            toolbar.setTitle("Home");
             navigationView.setCheckedItem(R.id.nav_home);
         }
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
                 Fragment selectedFragment = null;
                 int id = item.getItemId();
 
                 if (id == R.id.nav_home) {
                     selectedFragment = new HomeFragment();
                     toolbar.setTitle("Home");
+
                 } else if (id == R.id.nav_trips) {
                     selectedFragment = new TripsFragment();
                     toolbar.setTitle("Trips");
+
+                } else if (id == R.id.nav_favorites) {
+                    selectedFragment = new FavoriteFragment();
+                    toolbar.setTitle("Favorites");
+
+                } else if (id == R.id.nav_special) {
+                    selectedFragment = new SpecialFragment();
+                    toolbar.setTitle("Special Section");
+
                 } else if (id == R.id.nav_logout) {
                     logout();
+                    drawerLayout.closeDrawer(GravityCompat.START);
                     return true;
+
                 } else if (id == R.id.nav_reservations) {
                     Toast.makeText(MainActivity.this, "My Reservations - Coming Soon", Toast.LENGTH_SHORT).show();
-                } else if (id == R.id.nav_favorites) {
-                    Toast.makeText(MainActivity.this, "Favorites - Coming Soon", Toast.LENGTH_SHORT).show();
-                } else if (id == R.id.nav_special) {
-                    Toast.makeText(MainActivity.this, "Special Section - Coming Soon", Toast.LENGTH_SHORT).show();
+
                 } else if (id == R.id.nav_profile) {
                     Toast.makeText(MainActivity.this, "Profile - Coming Soon", Toast.LENGTH_SHORT).show();
+
                 } else if (id == R.id.nav_contact) {
                     Toast.makeText(MainActivity.this, "Contact Us - Coming Soon", Toast.LENGTH_SHORT).show();
                 }
 
                 if (selectedFragment != null) {
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, selectedFragment)
-                            .commit();
+                    loadFragment(selectedFragment);
                     navigationView.setCheckedItem(id);
                 }
 
@@ -92,6 +106,13 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
+
+    private void loadFragment(Fragment fragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit();
     }
 
     private void logout() {
