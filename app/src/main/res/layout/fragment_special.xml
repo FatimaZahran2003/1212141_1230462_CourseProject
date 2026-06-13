@@ -1,0 +1,6 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:padding="12dp" android:background="@color/background">
+    <TextView android:id="@+id/tvSpecialTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Recommended Trips" android:textSize="22sp" android:textStyle="bold" android:textColor="@color/primary_green" android:gravity="center" android:padding="12dp"/>
+    <TextView android:id="@+id/tvSpecialDescription" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Trips with high ratings selected specially for you" android:textSize="14sp" android:textColor="@color/gray" android:gravity="center" android:paddingBottom="10dp"/>
+    <TextView android:id="@+id/tvEmptySpecial" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="No recommended trips available" android:textSize="16sp" android:textColor="@color/gray" android:gravity="center" android:visibility="gone" android:padding="20dp"/>
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/recyclerViewSpecial" android:layout_width="match_parent" android:layout_height="match_parent"/>
+</LinearLayout>
