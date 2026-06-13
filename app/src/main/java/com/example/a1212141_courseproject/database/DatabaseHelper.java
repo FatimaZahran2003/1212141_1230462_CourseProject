@@ -85,11 +85,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(createReservationsTable);
 
         String insertAdmin = "INSERT INTO " + TABLE_USERS + "("
-                + COLUMN_EMAIL + ", " + COLUMN_FIRST_NAME + ", "
-                + COLUMN_LAST_NAME + ", " + COLUMN_PASSWORD + ") "
+                + COLUMN_EMAIL + ", "
+                + COLUMN_FIRST_NAME + ", "
+                + COLUMN_LAST_NAME + ", "
+                + COLUMN_PASSWORD + ") "
                 + "VALUES('admin@admin.com', 'Admin', 'Admin', 'Admin123!')";
         db.execSQL(insertAdmin);
-
     }
 
     @Override
@@ -100,9 +101,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-
     public boolean addUser(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues values = new ContentValues();
         values.put(COLUMN_EMAIL, user.getEmail());
         values.put(COLUMN_FIRST_NAME, user.getFirstName());
@@ -113,36 +114,67 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         long result = db.insert(TABLE_USERS, null, values);
         db.close();
+
         return result != -1;
     }
 
     public boolean checkUser(String email, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_USER_ID},
+
+        Cursor cursor = db.query(
+                TABLE_USERS,
+                new String[]{COLUMN_USER_ID},
                 COLUMN_EMAIL + "=? AND " + COLUMN_PASSWORD + "=?",
-                new String[]{email, password}, null, null, null);
+                new String[]{email, password},
+                null,
+                null,
+                null
+        );
+
         boolean exists = cursor.getCount() > 0;
+
         cursor.close();
         db.close();
+
         return exists;
     }
 
     public boolean isEmailExists(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USERS, new String[]{COLUMN_USER_ID},
-                COLUMN_EMAIL + "=?", new String[]{email}, null, null, null);
+
+        Cursor cursor = db.query(
+                TABLE_USERS,
+                new String[]{COLUMN_USER_ID},
+                COLUMN_EMAIL + "=?",
+                new String[]{email},
+                null,
+                null,
+                null
+        );
+
         boolean exists = cursor.getCount() > 0;
+
         cursor.close();
         db.close();
+
         return exists;
     }
 
     public User getUserByEmail(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USERS, null, COLUMN_EMAIL + "=?",
-                new String[]{email}, null, null, null);
+
+        Cursor cursor = db.query(
+                TABLE_USERS,
+                null,
+                COLUMN_EMAIL + "=?",
+                new String[]{email},
+                null,
+                null,
+                null
+        );
 
         User user = null;
+
         if (cursor.moveToFirst()) {
             user = new User(
                     cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_USER_ID)),
@@ -154,17 +186,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     null
             );
         }
+
         cursor.close();
         db.close();
+
         return user;
     }
 
     public User getUserById(int userId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_USERS, null, COLUMN_USER_ID + "=?",
-                new String[]{String.valueOf(userId)}, null, null, null);
+
+        Cursor cursor = db.query(
+                TABLE_USERS,
+                null,
+                COLUMN_USER_ID + "=?",
+                new String[]{String.valueOf(userId)},
+                null,
+                null,
+                null
+        );
 
         User user = null;
+
         if (cursor.moveToFirst()) {
             user = new User(
                     cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_USER_ID)),
@@ -176,13 +219,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     null
             );
         }
+
         cursor.close();
         db.close();
+
         return user;
     }
 
     public boolean updateUser(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues values = new ContentValues();
         values.put(COLUMN_FIRST_NAME, user.getFirstName());
         values.put(COLUMN_LAST_NAME, user.getLastName());
@@ -193,14 +239,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_PASSWORD, user.getPassword());
         }
 
-        int result = db.update(TABLE_USERS, values, COLUMN_USER_ID + "=?",
-                new String[]{String.valueOf(user.getId())});
+        int result = db.update(
+                TABLE_USERS,
+                values,
+                COLUMN_USER_ID + "=?",
+                new String[]{String.valueOf(user.getId())}
+        );
+
         db.close();
+
         return result > 0;
     }
 
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
+
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_USERS, null, null, null, null, null, null);
 
@@ -215,27 +268,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
                         null
                 );
+
                 users.add(user);
+
             } while (cursor.moveToNext());
         }
+
         cursor.close();
         db.close();
+
         return users;
     }
 
     public boolean deleteUser(int userId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int result = db.delete(TABLE_USERS, COLUMN_USER_ID + "=?",
-                new String[]{String.valueOf(userId)});
+
+        int result = db.delete(
+                TABLE_USERS,
+                COLUMN_USER_ID + "=?",
+                new String[]{String.valueOf(userId)}
+        );
+
         db.close();
+
         return result > 0;
     }
 
-
     public boolean insertTrip(Trip trip) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
 
+        ContentValues values = new ContentValues();
         values.put(COLUMN_DESTINATION, trip.getDestination());
         values.put(COLUMN_COUNTRY, trip.getCountry());
         values.put(COLUMN_DESCRIPTION, trip.getDescription());
@@ -244,14 +306,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_PRICE, trip.getPrice());
         values.put(COLUMN_RATING, trip.getRating());
         values.put(COLUMN_IMAGE_URL, trip.getImageUrl());
+        values.put(COLUMN_IS_FAVORITE, trip.isFavorite() ? 1 : 0);
 
         long result = db.insert(TABLE_TRIPS, null, values);
+
         db.close();
+
         return result != -1;
     }
 
     public List<Trip> getAllTrips() {
         List<Trip> trips = new ArrayList<>();
+
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.query(TABLE_TRIPS, null, null, null, null, null, null);
 
@@ -268,11 +334,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_RATING)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URL))
                 );
+
+                trip.setFavorite(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_FAVORITE)) == 1
+                );
+
                 trips.add(trip);
+
             } while (cursor.moveToNext());
         }
+
         cursor.close();
         db.close();
+
         return trips;
     }
 
@@ -282,27 +356,77 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-
     public void addToFavorites(int tripId) {
         SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues values = new ContentValues();
         values.put(COLUMN_IS_FAVORITE, 1);
-        db.update(TABLE_TRIPS, values, COLUMN_TRIP_ID + "=?", new String[]{String.valueOf(tripId)});
+
+        db.update(
+                TABLE_TRIPS,
+                values,
+                COLUMN_TRIP_ID + "=?",
+                new String[]{String.valueOf(tripId)}
+        );
+
         db.close();
     }
 
     public void removeFromFavorites(int tripId) {
         SQLiteDatabase db = this.getWritableDatabase();
+
         ContentValues values = new ContentValues();
         values.put(COLUMN_IS_FAVORITE, 0);
-        db.update(TABLE_TRIPS, values, COLUMN_TRIP_ID + "=?", new String[]{String.valueOf(tripId)});
+
+        db.update(
+                TABLE_TRIPS,
+                values,
+                COLUMN_TRIP_ID + "=?",
+                new String[]{String.valueOf(tripId)}
+        );
+
         db.close();
+    }
+
+    public boolean isFavorite(int tripId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_TRIPS,
+                new String[]{COLUMN_IS_FAVORITE},
+                COLUMN_TRIP_ID + "=?",
+                new String[]{String.valueOf(tripId)},
+                null,
+                null,
+                null
+        );
+
+        boolean favorite = false;
+
+        if (cursor.moveToFirst()) {
+            favorite = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_FAVORITE)) == 1;
+        }
+
+        cursor.close();
+        db.close();
+
+        return favorite;
     }
 
     public List<Trip> getFavoriteTrips() {
         List<Trip> favorites = new ArrayList<>();
+
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_TRIPS, null, COLUMN_IS_FAVORITE + "=1", null, null, null, null);
+
+        Cursor cursor = db.query(
+                TABLE_TRIPS,
+                null,
+                COLUMN_IS_FAVORITE + "=?",
+                new String[]{"1"},
+                null,
+                null,
+                null
+        );
 
         if (cursor.moveToFirst()) {
             do {
@@ -317,11 +441,60 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_RATING)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URL))
                 );
+
+                trip.setFavorite(true);
                 favorites.add(trip);
+
             } while (cursor.moveToNext());
         }
+
         cursor.close();
         db.close();
+
         return favorites;
+    }
+
+    public List<Trip> getSpecialTrips() {
+        List<Trip> specialTrips = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.query(
+                TABLE_TRIPS,
+                null,
+                COLUMN_RATING + ">=?",
+                new String[]{"4.7"},
+                null,
+                null,
+                COLUMN_RATING + " DESC"
+        );
+
+        if (cursor.moveToFirst()) {
+            do {
+                Trip trip = new Trip(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_TRIP_ID)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESTINATION)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_COUNTRY)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_DURATION)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PRICE)),
+                        cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_RATING)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URL))
+                );
+
+                trip.setFavorite(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_FAVORITE)) == 1
+                );
+
+                specialTrips.add(trip);
+
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return specialTrips;
     }
 }
