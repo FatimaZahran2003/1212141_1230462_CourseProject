@@ -13,7 +13,6 @@ public class Trip {
     private String imageUrl;
     private boolean isFavorite;
 
-    // Constructor كامل
     public Trip(int id, String destination, String country, String description,
                 int durationDays, String date, double price, double rating, String imageUrl) {
         this.id = id;
@@ -43,4 +42,12 @@ public class Trip {
     // Setters
     public void setId(int id) { this.id = id; }
     public void setFavorite(boolean favorite) { isFavorite = favorite; }
+    public void setDestination(String destination) { this.destination = destination; }
+    public void setCountry(String country) { this.country = country; }
+    public void setDescription(String description) { this.description = description; }
+    public void setDurationDays(int durationDays) { this.durationDays = durationDays; }
+    public void setDate(String date) { this.date = date; }
+    public void setPrice(double price) { this.price = price; }
+    public void setRating(double rating) { this.rating = rating; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 }
