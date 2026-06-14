@@ -611,7 +611,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                // ✅ يستخدم Constructor بدون tripName
                 Reservation reservation = new Reservation(
                         cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_RESERVATION_ID)),
                         cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_USER_ID_FK)),
