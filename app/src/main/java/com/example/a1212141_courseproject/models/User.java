@@ -11,7 +11,6 @@ public class User {
     private String phone;
     private String profileImage;
 
-    // Constructor 1: كامل (للتسجيل الكامل)
     public User(String email, String firstName, String lastName,
                 String password, String gender, String phone) {
         this.email = email;
@@ -22,7 +21,6 @@ public class User {
         this.phone = phone;
     }
 
-    // Constructor 2: بدون password (للعرض فقط)
     public User(int id, String email, String firstName, String lastName,
                 String gender, String phone, String profileImage) {
         this.id = id;
@@ -34,7 +32,6 @@ public class User {
         this.profileImage = profileImage;
     }
 
-    // Constructor 3: بسيط (للتسجيل السريع)
     public User(String email, String firstName, String lastName, String password) {
         this.email = email;
         this.firstName = firstName;
@@ -42,10 +39,8 @@ public class User {
         this.password = password;
     }
 
-    // Constructor 4: فارغ (للاستخدامات المختلفة)
     public User() {}
 
-    // ==================== Getters ====================
     public int getId() {
         return id;
     }
@@ -78,7 +73,6 @@ public class User {
         return profileImage;
     }
 
-    // ==================== Setters ====================
     public void setId(int id) {
         this.id = id;
     }
@@ -111,7 +105,6 @@ public class User {
         this.profileImage = profileImage;
     }
 
-    // ==================== Helper Methods ====================
     public String getFullName() {
         return firstName + " " + lastName;
     }
