@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_dashboard"
+            android:title="Admin Dashboard"
+            android:icon="@android:drawable/ic_menu_info_details" />
+
+        <item
+            android:id="@+id/nav_view_users"
+            android:title="Display Users"
+            android:icon="@android:drawable/ic_menu_view" />
+
+        <item
+            android:id="@+id/nav_add_admin"
+            android:title="Add new Admin"
+            android:icon="@android:drawable/ic_menu_add" />
+
+        <item
+            android:id="@+id/nav_view_trips"
+            android:title="Display Trips"
+            android:icon="@android:drawable/ic_menu_mapmode" />
+
+        <item
+            android:id="@+id/nav_add_trip"
+            android:title="Add new Trip"
+            android:icon="@android:drawable/ic_menu_add" />
+
+        <item
+            android:id="@+id/nav_delete_trip"
+            android:title="Delete Trip"
+            android:icon="@android:drawable/ic_menu_delete" />
+
+        <item
+            android:id="@+id/nav_edit_trip"
+            android:title="Edit Trip"
+            android:icon="@android:drawable/ic_menu_edit" />
+
+        <item
+            android:id="@+id/nav_view_reservations"
+            android:title="Display Reservations"
+            android:icon="@android:drawable/ic_menu_agenda" />
+
+        <item
+            android:id="@+id/nav_logout"
+            android:title="Logout"
+            android:icon="@android:drawable/ic_menu_close_clear_cancel" />
+
+    </group>
+
+</menu>
