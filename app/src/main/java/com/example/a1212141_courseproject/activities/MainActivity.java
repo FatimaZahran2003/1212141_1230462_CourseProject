@@ -18,6 +18,8 @@ import androidx.fragment.app.Fragment;
 import com.example.a1212141_courseproject.R;
 import com.example.a1212141_courseproject.fragments.FavoriteFragment;
 import com.example.a1212141_courseproject.fragments.HomeFragment;
+import com.example.a1212141_courseproject.fragments.ProfileFragment;
+import com.example.a1212141_courseproject.fragments.ReservationsFragment;
 import com.example.a1212141_courseproject.fragments.SpecialFragment;
 import com.example.a1212141_courseproject.fragments.TripsFragment;
 import com.google.android.material.navigation.NavigationView;
@@ -74,6 +76,11 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new TripsFragment();
                     toolbar.setTitle("Trips");
 
+                } else if (id == R.id.nav_reservations) {
+
+                    selectedFragment = new ReservationsFragment();
+                    toolbar.setTitle("My Reservations");
+
                 } else if (id == R.id.nav_favorites) {
                     selectedFragment = new FavoriteFragment();
                     toolbar.setTitle("Favorites");
@@ -91,8 +98,8 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "My Reservations - Coming Soon", Toast.LENGTH_SHORT).show();
 
                 } else if (id == R.id.nav_profile) {
-                    Toast.makeText(MainActivity.this, "Profile - Coming Soon", Toast.LENGTH_SHORT).show();
-
+                    selectedFragment = new ProfileFragment();
+                    toolbar.setTitle("Profile Management");
                 } else if (id == R.id.nav_contact) {
                     Intent intent = new Intent(MainActivity.this, ContactUsActivity.class);
                     startActivity(intent);
