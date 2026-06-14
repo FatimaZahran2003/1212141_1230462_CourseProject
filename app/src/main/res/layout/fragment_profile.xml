@@ -1,0 +1,12 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:background="#FBF5DD" android:padding="20dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Profile Management" android:textSize="26sp" android:textStyle="bold" android:textColor="#0D530E" android:gravity="center" android:layout_marginBottom="24dp"/>
+        <EditText android:id="@+id/etProfileEmail" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Email" android:enabled="false" android:inputType="textEmailAddress" android:layout_marginBottom="12dp"/>
+        <EditText android:id="@+id/etProfileFirstName" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="First Name" android:inputType="textPersonName" android:layout_marginBottom="12dp"/>
+        <EditText android:id="@+id/etProfileLastName" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Last Name" android:inputType="textPersonName" android:layout_marginBottom="12dp"/>
+        <EditText android:id="@+id/etProfilePhone" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Phone Number" android:inputType="phone" android:layout_marginBottom="12dp"/>
+        <EditText android:id="@+id/etProfilePassword" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="New Password (optional)" android:inputType="textPassword" android:layout_marginBottom="12dp"/>
+        <EditText android:id="@+id/etProfileConfirmPassword" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Confirm New Password" android:inputType="textPassword" android:layout_marginBottom="20dp"/>
+        <Button android:id="@+id/btnUpdateProfile" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Update Profile" android:backgroundTint="#306D29" android:textColor="@android:color/white"/>
+    </LinearLayout>
+</ScrollView>
