@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.example.a1212141_courseproject.models.Reservation;
 import com.example.a1212141_courseproject.models.Trip;
 import com.example.a1212141_courseproject.models.User;
 
@@ -496,5 +497,134 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return specialTrips;
+    }
+
+    // Delete trip by id
+    public boolean deleteTrip(int tripId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        int result = db.delete(TABLE_TRIPS, COLUMN_TRIP_ID + "=?",
+                new String[]{String.valueOf(tripId)});
+        db.close();
+        return result > 0;
+    }
+
+    // Get trip by id
+    public Trip getTripById(int tripId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_TRIPS, null, COLUMN_TRIP_ID + "=?",
+                new String[]{String.valueOf(tripId)}, null, null, null);
+
+        Trip trip = null;
+        if (cursor.moveToFirst()) {
+            trip = new Trip(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_TRIP_ID)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESTINATION)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_COUNTRY)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_DURATION)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)),
+                    cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_PRICE)),
+                    cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_RATING)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URL))
+            );
+        }
+        cursor.close();
+        db.close();
+        return trip;
+    }
+
+    // Get all reservations
+    public List<Reservation> getReservationsByUserId(int userId) {
+        List<Reservation> reservations = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT r.id, r.user_id, r.trip_id, t.destination, r.quantity, " +
+                "r.reservation_date, r.status " +
+                "FROM " + TABLE_RESERVATIONS + " r " +
+                "INNER JOIN " + TABLE_TRIPS + " t ON r.trip_id = t.id " +
+                "WHERE r.user_id = ?";
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
+
+        if (cursor.moveToFirst()) {
+            do {
+                Reservation reservation = new Reservation(
+                        cursor.getInt(0),
+                        cursor.getInt(1),
+                        cursor.getInt(2),
+                        cursor.getString(3),
+                        cursor.getInt(4),
+                        cursor.getString(5),
+                        cursor.getString(6)
+                );
+
+                reservations.add(reservation);
+
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        db.close();
+
+        return reservations;
+    }
+    public boolean addReservation(int userId, int tripId, int quantity,
+                                  String reservationDate, String status) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_USER_ID_FK, userId);
+        values.put(COLUMN_TRIP_ID_FK, tripId);
+        values.put(COLUMN_QUANTITY, quantity);
+        values.put(COLUMN_RESERVATION_DATE, reservationDate);
+        values.put(COLUMN_STATUS, status);
+
+        long result = db.insert(TABLE_RESERVATIONS, null, values);
+        db.close();
+
+        return result != -1;
+    }
+    // Update trip
+    public boolean updateTrip(Trip trip) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(COLUMN_DESTINATION, trip.getDestination());
+        values.put(COLUMN_COUNTRY, trip.getCountry());
+        values.put(COLUMN_DESCRIPTION, trip.getDescription());
+        values.put(COLUMN_DURATION, trip.getDurationDays());
+        values.put(COLUMN_DATE, trip.getDate());
+        values.put(COLUMN_PRICE, trip.getPrice());
+        values.put(COLUMN_RATING, trip.getRating());
+        values.put(COLUMN_IMAGE_URL, trip.getImageUrl());
+
+        int result = db.update(TABLE_TRIPS, values, COLUMN_TRIP_ID + "=?",
+                new String[]{String.valueOf(trip.getId())});
+        db.close();
+        return result > 0;
+    }
+    public List<Reservation> getAllReservations() {
+        List<Reservation> reservations = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(TABLE_RESERVATIONS, null, null, null, null, null, COLUMN_RESERVATION_DATE + " DESC");
+
+        if (cursor.moveToFirst()) {
+            do {
+                // ✅ يستخدم Constructor بدون tripName
+                Reservation reservation = new Reservation(
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_RESERVATION_ID)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_USER_ID_FK)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_TRIP_ID_FK)),
+                        cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_QUANTITY)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_RESERVATION_DATE)),
+                        cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_STATUS))
+                );
+                reservations.add(reservation);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return reservations;
     }
 }
