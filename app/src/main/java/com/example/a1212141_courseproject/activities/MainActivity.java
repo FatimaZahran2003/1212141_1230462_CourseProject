@@ -94,7 +94,8 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Profile - Coming Soon", Toast.LENGTH_SHORT).show();
 
                 } else if (id == R.id.nav_contact) {
-                    Toast.makeText(MainActivity.this, "Contact Us - Coming Soon", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(MainActivity.this, ContactUsActivity.class);
+                    startActivity(intent);
                 }
 
                 if (selectedFragment != null) {
