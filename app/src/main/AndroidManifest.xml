@@ -50,6 +50,9 @@
         <activity
             android:name=".activities.AdminActivity"
             android:exported="false" />
+        <activity
+            android:name=".activities.ContactUsActivity"
+            android:exported="false" />
 
     </application>
 
