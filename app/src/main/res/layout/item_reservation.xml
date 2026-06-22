@@ -15,7 +15,6 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- ✅ اسم الرحلة -->
         <TextView
             android:id="@+id/tvReservationTripName"
             android:layout_width="match_parent"
@@ -25,7 +24,6 @@
             android:textColor="@color/primary_green"
             android:gravity="right" />
 
-        <!-- ✅ الكمية -->
         <TextView
             android:id="@+id/tvReservationQuantity"
             android:layout_width="match_parent"
@@ -35,7 +33,6 @@
             android:gravity="right"
             android:layout_marginTop="4dp" />
 
-        <!-- ✅ التاريخ -->
         <TextView
             android:id="@+id/tvReservationDate"
             android:layout_width="match_parent"
@@ -45,7 +42,6 @@
             android:gravity="right"
             android:layout_marginTop="4dp" />
 
-        <!-- ✅ الحالة -->
         <TextView
             android:id="@+id/tvReservationStatus"
             android:layout_width="match_parent"
@@ -56,14 +52,13 @@
             android:gravity="right"
             android:layout_marginTop="4dp" />
 
-        <!-- ✅ زر إلغاء الحجز (اختياري) -->
         <Button
             android:id="@+id/btnCancelReservation"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
             android:layout_marginTop="12dp"
             android:layout_gravity="right"
-            android:text="إلغاء الحجز"
+            android:text=" Cancel Reservation"
             android:textSize="12sp"
             android:backgroundTint="#D32F2F"
             app:cornerRadius="17dp"
