@@ -26,9 +26,7 @@ public class ReservationsFragment extends Fragment {
     private RecyclerView recyclerView;
     private DatabaseHelper databaseHelper;
     private SharedPreferences sharedPreferences;
-
-    public ReservationsFragment() {
-    }
+    private ReservationsAdapter adapter;
 
     @Nullable
     @Override
@@ -44,22 +42,36 @@ public class ReservationsFragment extends Fragment {
         databaseHelper = new DatabaseHelper(getContext());
         sharedPreferences = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
 
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        loadReservations();
+    }
+
+    private void loadReservations() {
         int userId = sharedPreferences.getInt("user_id", -1);
 
         if (userId == -1) {
-            Toast.makeText(getContext(), "User not found", Toast.LENGTH_SHORT).show();
-            return view;
+            Toast.makeText(getContext(), "الرجاء تسجيل الدخول", Toast.LENGTH_SHORT).show();
+            return;
         }
 
         List<Reservation> reservations = databaseHelper.getReservationsByUserId(userId);
-        recyclerView.setAdapter(new ReservationsAdapter(reservations));
 
-        return view;
+        if (adapter == null) {
+            adapter = new ReservationsAdapter(reservations);
+            recyclerView.setAdapter(adapter);
+        } else {
+            adapter.updateList(reservations);
+        }
     }
 
     private static class ReservationsAdapter extends RecyclerView.Adapter<ReservationsAdapter.ViewHolder> {
 
-        private final List<Reservation> reservations;
+        private List<Reservation> reservations;
 
         ReservationsAdapter(List<Reservation> reservations) {
             this.reservations = reservations;
@@ -78,9 +90,9 @@ public class ReservationsFragment extends Fragment {
             Reservation reservation = reservations.get(position);
 
             holder.tvTripName.setText(reservation.getTripName());
-            holder.tvQuantity.setText("Quantity: " + reservation.getQuantity());
-            holder.tvDate.setText("Reservation Date: " + reservation.getReservationDate());
-            holder.tvStatus.setText("Status: " + reservation.getStatus());
+            holder.tvQuantity.setText("👥 العدد: " + reservation.getQuantity());
+            holder.tvDate.setText("📅 " + reservation.getReservationDate());
+            holder.tvStatus.setText("✅ " + reservation.getStatus());
         }
 
         @Override
@@ -88,13 +100,16 @@ public class ReservationsFragment extends Fragment {
             return reservations.size();
         }
 
-        static class ViewHolder extends RecyclerView.ViewHolder {
+        public void updateList(List<Reservation> newReservations) {
+            this.reservations = newReservations;
+            notifyDataSetChanged();
+        }
 
+        static class ViewHolder extends RecyclerView.ViewHolder {
             TextView tvTripName, tvQuantity, tvDate, tvStatus;
 
             ViewHolder(@NonNull View itemView) {
                 super(itemView);
-
                 tvTripName = itemView.findViewById(R.id.tvReservationTripName);
                 tvQuantity = itemView.findViewById(R.id.tvReservationQuantity);
                 tvDate = itemView.findViewById(R.id.tvReservationDate);

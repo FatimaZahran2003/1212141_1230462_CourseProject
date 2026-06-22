@@ -64,7 +64,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL(createUsersTable);
 
         String createTripsTable = "CREATE TABLE " + TABLE_TRIPS + "("
-                + COLUMN_TRIP_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + COLUMN_TRIP_ID + " INTEGER PRIMARY KEY, "
                 + COLUMN_DESTINATION + " TEXT, "
                 + COLUMN_COUNTRY + " TEXT, "
                 + COLUMN_DESCRIPTION + " TEXT, "
@@ -298,7 +298,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public boolean insertTrip(Trip trip) {
         SQLiteDatabase db = this.getWritableDatabase();
 
+        int oldFavorite = 0;
+
+        Cursor cursor = db.query(
+                TABLE_TRIPS,
+                new String[]{COLUMN_IS_FAVORITE},
+                COLUMN_TRIP_ID + "=?",
+                new String[]{String.valueOf(trip.getId())},
+                null,
+                null,
+                null
+        );
+
+        if (cursor.moveToFirst()) {
+            oldFavorite = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_FAVORITE));
+        }
+
+        cursor.close();
+
         ContentValues values = new ContentValues();
+        values.put(COLUMN_TRIP_ID, trip.getId());
         values.put(COLUMN_DESTINATION, trip.getDestination());
         values.put(COLUMN_COUNTRY, trip.getCountry());
         values.put(COLUMN_DESCRIPTION, trip.getDescription());
@@ -307,9 +326,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_PRICE, trip.getPrice());
         values.put(COLUMN_RATING, trip.getRating());
         values.put(COLUMN_IMAGE_URL, trip.getImageUrl());
-        values.put(COLUMN_IS_FAVORITE, trip.isFavorite() ? 1 : 0);
+        values.put(COLUMN_IS_FAVORITE, oldFavorite);
 
-        long result = db.insert(TABLE_TRIPS, null, values);
+        long result = db.insertWithOnConflict(
+                TABLE_TRIPS,
+                null,
+                values,
+                SQLiteDatabase.CONFLICT_REPLACE
+        );
 
         db.close();
 
@@ -353,7 +377,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteAllTrips() {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_TRIPS, null, null);
+
+        db.delete(
+                TABLE_TRIPS,
+                COLUMN_IS_FAVORITE + "=?",
+                new String[]{"0"}
+        );
+
         db.close();
     }
 
@@ -499,22 +529,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return specialTrips;
     }
 
-    // Delete trip by id
     public boolean deleteTrip(int tripId) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int result = db.delete(TABLE_TRIPS, COLUMN_TRIP_ID + "=?",
-                new String[]{String.valueOf(tripId)});
+
+        int result = db.delete(
+                TABLE_TRIPS,
+                COLUMN_TRIP_ID + "=?",
+                new String[]{String.valueOf(tripId)}
+        );
+
         db.close();
+
         return result > 0;
     }
 
-    // Get trip by id
     public Trip getTripById(int tripId) {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_TRIPS, null, COLUMN_TRIP_ID + "=?",
-                new String[]{String.valueOf(tripId)}, null, null, null);
+
+        Cursor cursor = db.query(
+                TABLE_TRIPS,
+                null,
+                COLUMN_TRIP_ID + "=?",
+                new String[]{String.valueOf(tripId)},
+                null,
+                null,
+                null
+        );
 
         Trip trip = null;
+
         if (cursor.moveToFirst()) {
             trip = new Trip(
                     cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_TRIP_ID)),
@@ -527,23 +570,28 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_RATING)),
                     cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_IMAGE_URL))
             );
+
+            trip.setFavorite(
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_FAVORITE)) == 1
+            );
         }
+
         cursor.close();
         db.close();
+
         return trip;
     }
 
-    // Get all reservations
     public List<Reservation> getReservationsByUserId(int userId) {
         List<Reservation> reservations = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String query = "SELECT r.id, r.user_id, r.trip_id, t.destination, r.quantity, " +
-                "r.reservation_date, r.status " +
-                "FROM " + TABLE_RESERVATIONS + " r " +
-                "INNER JOIN " + TABLE_TRIPS + " t ON r.trip_id = t.id " +
-                "WHERE r.user_id = ?";
+        String query = "SELECT r.id, r.user_id, r.trip_id, t.destination, r.quantity, "
+                + "r.reservation_date, r.status "
+                + "FROM " + TABLE_RESERVATIONS + " r "
+                + "INNER JOIN " + TABLE_TRIPS + " t ON r.trip_id = t.id "
+                + "WHERE r.user_id = ?";
 
         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
 
@@ -569,6 +617,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return reservations;
     }
+
     public boolean addReservation(int userId, int tripId, int quantity,
                                   String reservationDate, String status) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -581,15 +630,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_STATUS, status);
 
         long result = db.insert(TABLE_RESERVATIONS, null, values);
+
         db.close();
 
         return result != -1;
     }
-    // Update trip
+
     public boolean updateTrip(Trip trip) {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
 
+        int oldFavorite = trip.isFavorite() ? 1 : 0;
+
+        Cursor cursor = db.query(
+                TABLE_TRIPS,
+                new String[]{COLUMN_IS_FAVORITE},
+                COLUMN_TRIP_ID + "=?",
+                new String[]{String.valueOf(trip.getId())},
+                null,
+                null,
+                null
+        );
+
+        if (cursor.moveToFirst()) {
+            oldFavorite = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_FAVORITE));
+        }
+
+        cursor.close();
+
+        ContentValues values = new ContentValues();
         values.put(COLUMN_DESTINATION, trip.getDestination());
         values.put(COLUMN_COUNTRY, trip.getCountry());
         values.put(COLUMN_DESCRIPTION, trip.getDescription());
@@ -598,16 +666,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_PRICE, trip.getPrice());
         values.put(COLUMN_RATING, trip.getRating());
         values.put(COLUMN_IMAGE_URL, trip.getImageUrl());
+        values.put(COLUMN_IS_FAVORITE, oldFavorite);
 
-        int result = db.update(TABLE_TRIPS, values, COLUMN_TRIP_ID + "=?",
-                new String[]{String.valueOf(trip.getId())});
+        int result = db.update(
+                TABLE_TRIPS,
+                values,
+                COLUMN_TRIP_ID + "=?",
+                new String[]{String.valueOf(trip.getId())}
+        );
+
         db.close();
+
         return result > 0;
     }
+
     public List<Reservation> getAllReservations() {
         List<Reservation> reservations = new ArrayList<>();
+
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.query(TABLE_RESERVATIONS, null, null, null, null, null, COLUMN_RESERVATION_DATE + " DESC");
+
+        Cursor cursor = db.query(
+                TABLE_RESERVATIONS,
+                null,
+                null,
+                null,
+                null,
+                null,
+                COLUMN_RESERVATION_DATE + " DESC"
+        );
 
         if (cursor.moveToFirst()) {
             do {
@@ -619,11 +705,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_RESERVATION_DATE)),
                         cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_STATUS))
                 );
+
                 reservations.add(reservation);
+
             } while (cursor.moveToNext());
         }
+
         cursor.close();
         db.close();
+
         return reservations;
     }
 }

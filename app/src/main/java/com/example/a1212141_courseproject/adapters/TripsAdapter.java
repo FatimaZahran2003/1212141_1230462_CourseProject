@@ -27,15 +27,21 @@ public class TripsAdapter extends RecyclerView.Adapter<TripsAdapter.ViewHolder> 
     private List<Trip> trips;
     private DatabaseHelper databaseHelper;
     private OnTripClickListener listener;
+    private boolean removeItemWhenUnfavorite;
 
     public interface OnTripClickListener {
         void onTripClick(int tripId);
     }
 
     public TripsAdapter(Context context, List<Trip> trips, OnTripClickListener listener) {
+        this(context, trips, listener, false);
+    }
+
+    public TripsAdapter(Context context, List<Trip> trips, OnTripClickListener listener, boolean removeItemWhenUnfavorite) {
         this.context = context;
         this.trips = trips;
         this.listener = listener;
+        this.removeItemWhenUnfavorite = removeItemWhenUnfavorite;
         this.databaseHelper = new DatabaseHelper(context);
     }
 
@@ -58,29 +64,31 @@ public class TripsAdapter extends RecyclerView.Adapter<TripsAdapter.ViewHolder> 
         holder.tvDescription.setText(trip.getDescription());
 
         trip.setFavorite(databaseHelper.isFavorite(trip.getId()));
-
-        if (trip.isFavorite()) {
-            holder.btnFavorite.setText("❤️");
-        } else {
-            holder.btnFavorite.setText("♡");
-        }
+        holder.btnFavorite.setText(trip.isFavorite() ? "❤️" : "♡");
 
         holder.btnFavorite.setOnClickListener(v -> {
-            if (trip.isFavorite()) {
-                databaseHelper.removeFromFavorites(trip.getId());
-                trip.setFavorite(false);
+            int currentPosition = holder.getAdapterPosition();
+
+            if (currentPosition == RecyclerView.NO_POSITION) {
+                return;
+            }
+
+            Trip currentTrip = trips.get(currentPosition);
+
+            if (currentTrip.isFavorite()) {
+                databaseHelper.removeFromFavorites(currentTrip.getId());
+                currentTrip.setFavorite(false);
                 holder.btnFavorite.setText("♡");
                 Toast.makeText(context, "Removed from favorites", Toast.LENGTH_SHORT).show();
 
-                int currentPosition = holder.getAdapterPosition();
-                if (currentPosition != RecyclerView.NO_POSITION) {
+                if (removeItemWhenUnfavorite) {
                     trips.remove(currentPosition);
                     notifyItemRemoved(currentPosition);
                 }
 
             } else {
-                databaseHelper.addToFavorites(trip.getId());
-                trip.setFavorite(true);
+                databaseHelper.addToFavorites(currentTrip.getId());
+                currentTrip.setFavorite(true);
                 holder.btnFavorite.setText("❤️");
                 Toast.makeText(context, "Added to favorites", Toast.LENGTH_SHORT).show();
             }

@@ -1,8 +1,74 @@
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_margin="8dp" app:cardCornerRadius="12dp" app:cardElevation="4dp" app:cardBackgroundColor="@color/card_background">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:layoutDirection="ltr">
-        <TextView android:id="@+id/tvReservationTripName" android:layout_width="match_parent" android:layout_height="wrap_content" android:textSize="20sp" android:textStyle="bold" android:textColor="@color/primary_green"/>
-        <TextView android:id="@+id/tvReservationQuantity" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:textSize="15sp"/>
-        <TextView android:id="@+id/tvReservationDate" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:textSize="15sp"/>
-        <TextView android:id="@+id/tvReservationStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:textSize="15sp" android:textStyle="bold"/>
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="@color/white"
+    android:layoutDirection="rtl">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- ✅ اسم الرحلة -->
+        <TextView
+            android:id="@+id/tvReservationTripName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/primary_green"
+            android:gravity="right" />
+
+        <!-- ✅ الكمية -->
+        <TextView
+            android:id="@+id/tvReservationQuantity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/gray"
+            android:gravity="right"
+            android:layout_marginTop="4dp" />
+
+        <!-- ✅ التاريخ -->
+        <TextView
+            android:id="@+id/tvReservationDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/gray"
+            android:gravity="right"
+            android:layout_marginTop="4dp" />
+
+        <!-- ✅ الحالة -->
+        <TextView
+            android:id="@+id/tvReservationStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="@color/primary_green"
+            android:gravity="right"
+            android:layout_marginTop="4dp" />
+
+        <!-- ✅ زر إلغاء الحجز (اختياري) -->
+        <Button
+            android:id="@+id/btnCancelReservation"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_marginTop="12dp"
+            android:layout_gravity="right"
+            android:text="إلغاء الحجز"
+            android:textSize="12sp"
+            android:backgroundTint="#D32F2F"
+            app:cornerRadius="17dp"
+            android:visibility="gone" />
+
     </LinearLayout>
+
 </androidx.cardview.widget.CardView>
